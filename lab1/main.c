@@ -11,6 +11,8 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <stdlib.h>
 
 static int number = 0;
@@ -28,13 +30,14 @@ int main()
     {
         // Parent pid
         printf("It's parent process\n");
+        waitpid(child_pid, 0, 0);
     }
     else
     {
         // Forked pid
         printf("It's child process\n");
     }
-    
+
     atexit(at_exit_trigger);
     printf("2: \n\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
     
