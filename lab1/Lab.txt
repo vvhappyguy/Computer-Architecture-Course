@@ -1,0 +1,8 @@
+1. From stackoverflow
+First of all, on_exit isn't specified by POSIX (atexit with the same semantics is). Second , the linux manual says:
+
+    The on_exit() function registers the given function to be called at normal process termination, whether via exit(3) or via return from the program's main().
+
+Getting killed by a signal is not a normal exit for a process so callbacks installed with on_exit and atexit aren't implicitly called.
+
+2. Регистрация с помощью at_exit наследуется для дочерних процессов!
