@@ -11,23 +11,38 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <stdlib.h>
+
+static int number = 0;
+
+void at_exit_trigger(void);
 
 int main()
 {
-    printf("1: \n\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
+    atexit(at_exit_trigger);
+    printf("1: \n\tPPID: %d\n\tPID: %d\n\n",getppid(), getpid());
     
 
-    if(fork() == 0)
+    __pid_t child_pid;
+    if((child_pid = fork()) != 0)
     {
         // Parent pid
-        printf("2: \n\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
+        printf("It's parent process\n");
     }
     else
     {
         // Forked pid
-        printf("2: \n\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
+        printf("It's child process\n");
     }
+    
+    atexit(at_exit_trigger);
+    printf("2: \n\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
     
     getchar();
     return 0;
+}
+
+void at_exit_trigger(void)
+{
+    printf("at_exit_trigger(%d) for pid: %d\n", number++, getpid());
 }
