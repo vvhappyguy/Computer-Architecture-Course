@@ -30,16 +30,26 @@ int main()
     {
         // Parent pid
         printf("It's parent process\n");
-        waitpid(child_pid, 0, 0);
+        atexit(at_exit_trigger);
+        printf("2: \n\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
+        int res = 0;
+        waitpid(child_pid, &res, 0);
+        ECHILD;
+        printf("3: \n\tres: %d\n\tPPID: %d\n\tPID: %d\n", res ,getppid(), getpid());
     }
     else
     {
         // Forked pid
         printf("It's child process\n");
+        atexit(at_exit_trigger);
+        printf("2: \n\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
+        int a = 0, b = 0;
+        printf("%d",a / b);
+        printf("3: \n\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
     }
 
     atexit(at_exit_trigger);
-    printf("2: \n\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
+    printf("4: \n\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
     
     getchar();
     return 0;

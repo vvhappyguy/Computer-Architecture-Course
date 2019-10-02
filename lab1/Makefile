@@ -1,5 +1,5 @@
 all:
-	clang main.c -Weverything -o a.out
+	clang main.c -Weverything -O0 -o a.out
 	./a.out
 	rm a.out
 compile:
