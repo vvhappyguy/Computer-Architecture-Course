@@ -23,9 +23,11 @@ int main(void)
         perror("scandir");
         exit(EXIT_FAILURE);
     }
-
+    
+    
+    // Prints dirent fields: $type\t$inode\t$size\t$name
     while (n--) {
-        printf("%s\n", namelist[n]->d_name);
+        printf("%hhu\t%lu\t%hu\t%s\n", namelist[n]->d_type, namelist[n]->d_ino,namelist[n]->d_reclen, namelist[n]->d_name);
         free(namelist[n]);
     }
     free(namelist);
