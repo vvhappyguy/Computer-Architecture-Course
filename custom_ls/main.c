@@ -17,6 +17,9 @@
 #include <sys/types.h>
 #include <time.h>
 
+void printFileType(__mode_t);
+void printPerms(__mode_t);
+
 int main(void)
 {
     struct dirent **namelist;
@@ -35,10 +38,25 @@ int main(void)
         static struct stat tmp_stat;
         // TODO: Add checking stat structure for all files and printing like ls -al
 
-        // printf("%hhu\t%lu\t%hu\t%s\n", namelist[n]->d_type, namelist[n]->d_ino,namelist[n]->d_reclen, namelist[n]->d_name);
+        //printf("%hhu\t%lu\t%hu\t%s\n", namelist[n]->d_type, namelist[n]->d_ino,namelist[n]->d_reclen, namelist[n]->d_name);
         if(stat(namelist[n]->d_name, &tmp_stat) == 0)
         {
-            switch (tmp_stat.st_mode & S_IFMT)
+            
+            printFileType(tmp_stat.st_mode);
+            printPerms(tmp_stat.st_mode);
+            printf("\t%s", namelist[n]->d_name);
+            printf("\n");
+        }
+        free(namelist[n]);
+    }
+    free(namelist);
+
+    exit(EXIT_SUCCESS);
+}
+
+void printFileType(__mode_t _mode)
+{
+            switch (_mode & S_IFMT)
             {
             case __S_IFBLK:
                 printf("b");
@@ -65,14 +83,46 @@ int main(void)
                 printf("-");
                 break;
             }
+}
 
-            printf("\n");
-        }
-        free(namelist[n]);
-    }
-    free(namelist);
-
-    exit(EXIT_SUCCESS);
+void printPerms(__mode_t _mode)
+{
+    if(_mode & 0400)
+        printf("r");
+    else
+        printf("-");
+    if(_mode & 0200)
+        printf("w");
+    else
+        printf("-");
+    if(_mode & 0100)
+        printf("x");
+    else
+        printf("-");
+    if(_mode & 0040)
+        printf("r");
+    else
+        printf("-");
+    if(_mode & 0020)
+        printf("w");
+    else
+        printf("-");
+    if(_mode & 0010)
+        printf("x");
+    else
+        printf("-");
+    if(_mode & 0004)
+        printf("r");
+    else
+        printf("-");
+    if(_mode & 0002)
+        printf("w");
+    else
+        printf("-");
+    if(_mode & 0001)
+        printf("x");
+    else
+        printf("-");
 }
 
 /* 
