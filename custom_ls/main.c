@@ -12,6 +12,10 @@
 #include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <sys/stat.h>
+#include <sys/sysmacros.h>
+#include <sys/types.h>
+#include <time.h>
 
 int main(void)
 {
@@ -23,12 +27,47 @@ int main(void)
         perror("scandir");
         exit(EXIT_FAILURE);
     }
-    
+
     
     // Prints dirent fields: $type\t$inode\t$size\t$name
-    while (n--) { 
+    printf("total %i\n", n);
+    while (n--) {
+        static struct stat tmp_stat;
         // TODO: Add checking stat structure for all files and printing like ls -al
-        printf("%hhu\t%lu\t%hu\t%s\n", namelist[n]->d_type, namelist[n]->d_ino,namelist[n]->d_reclen, namelist[n]->d_name);
+
+        // printf("%hhu\t%lu\t%hu\t%s\n", namelist[n]->d_type, namelist[n]->d_ino,namelist[n]->d_reclen, namelist[n]->d_name);
+        if(stat(namelist[n]->d_name, &tmp_stat) == 0)
+        {
+            switch (tmp_stat.st_mode & S_IFMT)
+            {
+            case __S_IFBLK:
+                printf("b");
+                break;
+            case __S_IFCHR:
+                printf("c");
+                break;
+            case __S_IFDIR:
+                printf("d");
+                break;
+            case __S_IFIFO:
+                printf("p");
+                break;
+            case __S_IFLNK:
+                printf("l");
+                break;
+            case __S_IFSOCK:
+                printf("s");
+                break;
+            // case __S_IFREG:
+            //     printf("f");
+            //     break;
+            default:
+                printf("-");
+                break;
+            }
+
+            printf("\n");
+        }
         free(namelist[n]);
     }
     free(namelist);
