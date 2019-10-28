@@ -16,9 +16,13 @@
 #include <sys/sysmacros.h>
 #include <sys/types.h>
 #include <time.h>
+#include <pwd.h>
+#include <grp.h>
 
 void printFileType(__mode_t);
 void printPerms(__mode_t);
+void printUserOwner(__uid_t);
+void printGroupOwner(__gid_t _gid);
 
 int main(void)
 {
@@ -44,6 +48,11 @@ int main(void)
             
             printFileType(tmp_stat.st_mode);
             printPerms(tmp_stat.st_mode);
+            printf(" %lu", tmp_stat.st_nlink);
+            printf(" ");
+            printUserOwner(tmp_stat.st_uid);
+            printf(" ");
+            printGroupOwner(tmp_stat.st_gid);
             printf("\t%s", namelist[n]->d_name);
             printf("\n");
         }
@@ -123,6 +132,20 @@ void printPerms(__mode_t _mode)
         printf("x");
     else
         printf("-");
+}
+
+void printUserOwner(__uid_t _uid)
+{
+    struct passwd *pws;
+    pws = getpwuid(_uid);
+    printf("%s", pws->pw_name);
+}
+
+void printGroupOwner(__gid_t _gid)
+{
+    struct group *gp;
+    gp = getgrgid(_gid);
+    printf("%s", gp->gr_name);
 }
 
 /* 
