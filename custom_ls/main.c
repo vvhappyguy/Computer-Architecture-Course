@@ -23,6 +23,7 @@ void printFileType(__mode_t);
 void printPerms(__mode_t);
 void printUserOwner(__uid_t);
 void printGroupOwner(__gid_t _gid);
+void printSize(__off_t _size);
 
 int main(void)
 {
@@ -53,6 +54,10 @@ int main(void)
             printUserOwner(tmp_stat.st_uid);
             printf(" ");
             printGroupOwner(tmp_stat.st_gid);
+            printf(" ");
+            printSize(tmp_stat.st_size);
+            printf(" ");
+            printf("%s", ctime(&tmp_stat.st_mtime));
             printf("\t%s", namelist[n]->d_name);
             printf("\n");
         }
@@ -147,6 +152,12 @@ void printGroupOwner(__gid_t _gid)
     gp = getgrgid(_gid);
     printf("%s", gp->gr_name);
 }
+
+void printSize(__off_t _size)
+{
+    printf("%5ld", _size);
+}
+
 
 /* 
     ls -al
