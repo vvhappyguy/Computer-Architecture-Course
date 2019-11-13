@@ -46,7 +46,6 @@ int main(void)
         //printf("%hhu\t%lu\t%hu\t%s\n", namelist[n]->d_type, namelist[n]->d_ino,namelist[n]->d_reclen, namelist[n]->d_name);
         if(stat(namelist[n]->d_name, &tmp_stat) == 0)
         {
-            
             printFileType(tmp_stat.st_mode);
             printPerms(tmp_stat.st_mode);
             printf(" %lu", tmp_stat.st_nlink);
