@@ -17,12 +17,13 @@
 #include <time.h>
 #include <pwd.h>
 #include <grp.h>
+#include <string.h>
 
-void printFileType(__mode_t);
-void printPerms(__mode_t);
-void printUserOwner(__uid_t);
-void printGroupOwner(__gid_t _gid);
-void printSize(__off_t _size);
+void printFileType( mode_t);
+void printPerms( mode_t);
+void printUserOwner( uid_t);
+void printGroupOwner( gid_t _gid);
+void printSize( off_t _size);
 
 int main(void)
 {
@@ -66,29 +67,29 @@ int main(void)
     exit(EXIT_SUCCESS);
 }
 
-void printFileType(__mode_t _mode)
+void printFileType( mode_t _mode)
 {
             switch (_mode & S_IFMT)
             {
-            case __S_IFBLK:
+            case S_IFBLK:
                 printf("b");
                 break;
-            case __S_IFCHR:
+            case  S_IFCHR:
                 printf("c");
                 break;
-            case __S_IFDIR:
+            case  S_IFDIR:
                 printf("d");
                 break;
-            case __S_IFIFO:
+            case  S_IFIFO:
                 printf("p");
                 break;
-            case __S_IFLNK:
+            case  S_IFLNK:
                 printf("l");
                 break;
-            case __S_IFSOCK:
+            case  S_IFSOCK:
                 printf("s");
                 break;
-            // case __S_IFREG:
+            // case  S_IFREG:
             //     printf("f");
             //     break;
             default:
@@ -97,7 +98,7 @@ void printFileType(__mode_t _mode)
             }
 }
 
-void printPerms(__mode_t _mode)
+void printPerms( mode_t _mode)
 {
     if(_mode & 0400)
         printf("r");
@@ -137,21 +138,21 @@ void printPerms(__mode_t _mode)
         printf("-");
 }
 
-void printUserOwner(__uid_t _uid)
+void printUserOwner( uid_t _uid)
 {
     struct passwd *pws;
     pws = getpwuid(_uid);
     printf("%s", pws->pw_name);
 }
 
-void printGroupOwner(__gid_t _gid)
+void printGroupOwner( gid_t _gid)
 {
     struct group *gp;
     gp = getgrgid(_gid);
     printf("%s", gp->gr_name);
 }
 
-void printSize(__off_t _size)
+void printSize( off_t _size)
 {
     printf("%5ld", _size);
 }
