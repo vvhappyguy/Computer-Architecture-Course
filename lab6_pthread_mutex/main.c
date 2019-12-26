@@ -11,10 +11,10 @@
 
 static pthread_mutex_t mutex;
 
-void* rd(void *arg);
-void* wr(void *arg);
+void* reader(void *arg);
+void* writer(void *arg);
 
-void* wr(void *arg)
+void* writer(void *arg)
 {
     char * counter = (char*)arg;
      while(1)
@@ -29,7 +29,7 @@ void* wr(void *arg)
      
 }
 
-void* rd(void *arg)
+void* reader(void *arg)
 {
      const char* counter = (char*) arg;
 
@@ -50,10 +50,10 @@ int main ()
 	pthread_t read [PT_NUM];
     pthread_t write;
 
-    pthread_create(&write, NULL, wr, buffer);
+    pthread_create(&write, NULL, writer, buffer);
 	for (int i = 0; i<PT_NUM; ++i)
 	{
-		pthread_create(&read[i], NULL, rd, buffer);
+		pthread_create(&read[i], NULL, reader, buffer);
 	}
                 
     pthread_join(write, NULL);
