@@ -17,20 +17,24 @@
 #include <stdlib.h>
 #include <time.h>
 #include <fcntl.h>
+#include <string.h>
 
 // Only for killing child process in specific situations
 #include <wait.h>
 #include <signal.h>
 
 #define FIFO_PATH "/tmp/time_fifo"
-#define DATASIZE_TIME sizeof(time_t)
+
+#define TIME_BUFFER_SIZE_STR 25
+
+typedef struct _fifo_value
+{
+    char str[TIME_BUFFER_SIZE_STR];
+    pid_t pid;
+} fifo_value;
 
 int main()
 {
-    time_t lt;
-    lt = time(NULL);
-    printf("Time = %ld\n", lt);
-    sleep(1); 
 
     if(mkfifo(FIFO_PATH, 0666) == -1)
     {
@@ -48,9 +52,13 @@ int main()
     if((child_pid = fork()) != 0)
     {
         // Parent pid
+        fifo_value value;
+        time_t t = time(NULL);
+        strncpy((char*)value.str, ctime(&t), TIME_BUFFER_SIZE_STR-1);
+        value.str[TIME_BUFFER_SIZE_STR-1]='\0';
+        value.pid = getpid();
         printf("It's parent process\n");
         printf("\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
-        lt = time(NULL); // Update time before writing to pipe
         fifo_fd = open(FIFO_PATH, O_WRONLY);
         if(fifo_fd == -1)
         {
@@ -61,12 +69,9 @@ int main()
             unlink(FIFO_PATH);
             exit(1);
         }
-        write(fifo_fd, &lt, DATASIZE_TIME);
-        printf("\tWritten time is %ld\n", lt);
-        int res = 0;
+        write(fifo_fd, &value, sizeof(fifo_value));
+        // printf("\tWritten time is %s\n", value.str);
         close(fifo_fd);
-        sleep(1);
-        waitpid(child_pid, &res, 0);
         unlink(FIFO_PATH);
     }
     else
@@ -74,19 +79,19 @@ int main()
         // Forked pid
         printf("It's child process\n");
         printf("\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
-        printf("\tBase time was %ld\n", lt);
         fifo_fd = open(FIFO_PATH, O_RDONLY);
         if(fifo_fd == -1)
         {
             printf("Can't open FIFO %x\n", fifo_fd);            
             exit(1);
         }
-        read(fifo_fd, &lt, DATASIZE_TIME);
-        close(fifo_fd);
-        printf("\tRead time is %ld\n", lt);
+        fifo_value value;
+        read(fifo_fd, &value, sizeof(fifo_value));
         sleep(1);
-        lt = time(NULL);
-        printf("\tNow time is %ld\n", lt);
+        time_t lt = time(NULL);
+        printf("\tTime is %s from pid: %d\n\tThis thread time is %s", value.str, value.pid, ctime(&lt));
+        close(fifo_fd);
     }
+    waitpid(child_pid,0,0);
     return 0;
 }
