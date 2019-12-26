@@ -13,10 +13,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
-#include <sys/types.h>
-#include <time.h>
-#include <pwd.h>
-#include <grp.h>
+#include <time.h> // For time
+#include <pwd.h> // For user owner
+#include <grp.h> // For group owner
 #include <string.h>
 
 void printFileType( mode_t);
@@ -56,7 +55,11 @@ int main(void)
             printf(" ");
             printSize(tmp_stat.st_size);
             printf(" ");
-            printf("%s", ctime(&tmp_stat.st_mtime));
+            // Manipulation for deleting useless \n from ctime returned string
+            char tmp_time[25];
+            strncpy(tmp_time, ctime(&tmp_stat.st_mtime), 24);
+            tmp_time[24] = '\0';
+            printf("%s", tmp_time);
             printf("\t%s", namelist[n]->d_name);
             printf("\n");
         }
