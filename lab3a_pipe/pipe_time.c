@@ -15,18 +15,23 @@
 #include <sys/wait.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string.h>
+#include <errno.h>
+
+#define TIME_BUFFER_SIZE_STR 25
+
+typedef struct _pipe_value
+{
+    char str[TIME_BUFFER_SIZE_STR];
+    pid_t pid;
+} pipe_value;
 
 int main()
 {
-    time_t lt;
-    lt = time(NULL);
-    printf("Time = %ld\n", lt);
-    sleep(1); 
-
     int time_pipe[2];
     if(pipe(time_pipe) < 0)
     {
-        printf("Error - Pipe < 0\n");
+        printf("Error - Pipe < 0\nerrno:%d\n",errno);
         return 1;
     }
 
@@ -34,26 +39,28 @@ int main()
     if((child_pid = fork()) != 0)
     {
         // Parent pid
+        pipe_value value;
+        value.pid = getpid();
+        time_t t = time(NULL);
+        strncpy(value.str, ctime(&t), TIME_BUFFER_SIZE_STR-1);
+        value.str[TIME_BUFFER_SIZE_STR - 1] = '\0';
+        // Manipulation for deleting useless \n from ctime returned string
         printf("It's parent process\n");
         printf("\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
-        lt = time(NULL); // Update time before writing to pipe
-        write(time_pipe[1], &lt, sizeof(time_t));
-        printf("\tWritten time is %ld\n", lt);
-        int res = 0;
-        sleep(1);
-        waitpid(child_pid, &res, 0);
+        write(time_pipe[1], &value, sizeof(pipe_value));
+        printf("\tWritten time is %s\n", value.str);  
     }
     else
     {
         // Forked pid
+        sleep(2);
         printf("It's child process\n");
         printf("\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
-        printf("\tBase time was %ld\n", lt);
-        read(time_pipe[0], &lt, sizeof(time_t));
-        printf("\tRead time is %ld\n", lt);
-        sleep(1);
-        lt = time(NULL);
-        printf("\tNow time is %ld\n", lt);
+        pipe_value value;
+        read(time_pipe[0], &value, sizeof(pipe_value));
+        printf("\tRead time is %s from pid:%d\n", value.str, value.pid);
+        time_t t = time(NULL);
+        printf("\tBase time was %s",  ctime(&t));
     }
     return 0;
 }
