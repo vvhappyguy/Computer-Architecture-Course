@@ -24,6 +24,8 @@ void printUserOwner( uid_t);
 void printGroupOwner( gid_t _gid);
 void printSize( off_t _size);
 
+#define TIME_BUFFER_SIZE_STR 25
+
 int main(void)
 {
     struct dirent **namelist;
@@ -36,13 +38,10 @@ int main(void)
     }
 
     
-    // Prints dirent fields: $type\t$inode\t$size\t$name
     printf("total %i\n", n);
     while (n--) {
         static struct stat tmp_stat;
-        // TODO: Add checking stat structure for all files and printing like ls -al
 
-        //printf("%hhu\t%lu\t%hu\t%s\n", namelist[n]->d_type, namelist[n]->d_ino,namelist[n]->d_reclen, namelist[n]->d_name);
         if(stat(namelist[n]->d_name, &tmp_stat) == 0)
         {
             printFileType(tmp_stat.st_mode);
@@ -56,9 +55,9 @@ int main(void)
             printSize(tmp_stat.st_size);
             printf(" ");
             // Manipulation for deleting useless \n from ctime returned string
-            char tmp_time[25];
-            strncpy(tmp_time, ctime(&tmp_stat.st_mtime), 24);
-            tmp_time[24] = '\0';
+            char tmp_time[TIME_BUFFER_SIZE_STR];
+            strncpy(tmp_time, ctime(&tmp_stat.st_mtime), TIME_BUFFER_SIZE_STR - 1);
+            tmp_time[TIME_BUFFER_SIZE_STR - 1] = '\0';
             printf("%s", tmp_time);
             printf("\t%s", namelist[n]->d_name);
             printf("\n");
