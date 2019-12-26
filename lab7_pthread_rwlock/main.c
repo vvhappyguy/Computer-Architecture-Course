@@ -59,7 +59,7 @@ int main ()
 	{
 		pthread_create(&read[i], NULL, reader, buffer);
 	}
-    pthread_rwlock_unlock(&rwlock);       
+          
     pthread_join(write, NULL);
     for (int i = 0; i<READERS_COUNT; ++i)
 	{
