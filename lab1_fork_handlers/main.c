@@ -11,7 +11,6 @@
 
 #include <stdio.h>
 #include <unistd.h>
-#include <sys/types.h>
 #include <sys/wait.h>
 #include <stdlib.h>
 
@@ -25,7 +24,7 @@ int main()
     printf("1: \n\tPPID: %d\n\tPID: %d\n\n",getppid(), getpid());
     
 
-    __pid_t child_pid;
+    pid_t child_pid;
     if((child_pid = fork()) != 0)
     {
         // Parent pid
@@ -34,7 +33,7 @@ int main()
         printf("2: \n\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
         int res = 0;
         waitpid(child_pid, &res, 0);
-        ECHILD;
+        
         printf("3: \n\tres: %d\n\tPPID: %d\n\tPID: %d\n", res ,getppid(), getpid());
     }
     else
@@ -43,15 +42,15 @@ int main()
         printf("It's child process\n");
         atexit(at_exit_trigger);
         printf("2: \n\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
-        int a = 0, b = 0;
-        printf("%d",a / b);
+        // Special bad action
+        // int a = 0, b = 0;
+        // printf("%d",a / b);
         printf("3: \n\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
     }
 
     atexit(at_exit_trigger);
     printf("4: \n\tPPID: %d\n\tPID: %d\n",getppid(), getpid());
     
-    getchar();
     return 0;
 }
 
