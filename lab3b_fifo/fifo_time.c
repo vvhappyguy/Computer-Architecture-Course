@@ -20,8 +20,8 @@
 #include <string.h>
 
 // Only for killing child process in specific situations
-#include <wait.h>
-#include <signal.h>
+// #include <wait.h>
+// #include <signal.h>
 
 #define FIFO_PATH "/tmp/time_fifo"
 
