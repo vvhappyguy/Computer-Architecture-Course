@@ -19,9 +19,10 @@ typedef struct _sh_value
 } sh_value;
 
 #define SH_FILE "shmfile"
+
   
 int main() 
-{ 
+{
     sem_t *sem;
     key_t key = ftok(SH_FILE,65); 
     if(key == -1)

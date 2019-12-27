@@ -10,6 +10,8 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <sys/wait.h>
+#include <stdlib.h>
 
 #define TIME_BUFFER_SIZE_STR 25
 #define SEMAPHORE_NAME "/semaphore1"
@@ -21,13 +23,28 @@ typedef struct _sh_value
 } sh_value;
 
 #define SH_FILE "shmfile"
+
+static int shmid = -1;
+
+static void shmctl_clear()
+{
+        if(shmid != -1)
+        {
+                struct shmid_ds shmds;
+                
+                shmctl(shmid, IPC_RMID, &shmds);
+                printf("atexit\n");
+        }
+
+}
   
 int main() 
 { 
+    atexit(shmctl_clear);
     sem_t* sem;
     key_t key = ftok(SH_FILE, 65); 
     
-    int shmid = shmget(key,sizeof(sh_value),0666|IPC_CREAT); 
+    shmid = shmget(key,sizeof(sh_value),0666|IPC_CREAT); 
     
     sh_value *str;
   
