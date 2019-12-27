@@ -35,7 +35,6 @@ static void shmctl_clear()
                 shmctl(shmid, IPC_RMID, &shmds);
                 printf("atexit\n");
         }
-
 }
   
 int main() 

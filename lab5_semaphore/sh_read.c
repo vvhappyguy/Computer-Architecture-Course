@@ -10,7 +10,7 @@
 #include <sys/mman.h>
 
 #define TIME_BUFFER_SIZE_STR 25
-#define SEMAPHORE_NAME "/semaphore1"
+#define SEMAPHORE_NAME "semaphore1"
 
 typedef struct _sh_value
 {
