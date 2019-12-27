@@ -21,7 +21,7 @@ void* writer(void *arg)
     char * counter = (char*)arg;
     while(1)
     {
-        pthread_rwlock_trywrlock(&rwlock);
+        pthread_rwlock_wrlock(&rwlock);
         printf("Writer updates.\n");
         (*counter)++;
 
@@ -61,10 +61,10 @@ int main ()
 	}
           
     pthread_join(write, NULL);
-    for (int i = 0; i<READERS_COUNT; ++i)
-	{
-        pthread_join(read[i], NULL);
-	}
+    // for (int i = 0; i<READERS_COUNT; ++i)
+	// {
+    //     pthread_join(read[i], NULL);
+	// }
 
     pthread_rwlock_destroy(&rwlock);
         
