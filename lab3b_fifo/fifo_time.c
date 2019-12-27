@@ -47,7 +47,7 @@ int main()
     }
     
 
-     __pid_t child_pid;
+     pid_t child_pid;
      int fifo_fd;
     if((child_pid = fork()) != 0)
     {
